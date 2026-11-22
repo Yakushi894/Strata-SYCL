@@ -67,8 +67,13 @@ if %PSEL% GTR %COUNT% set PSEL=%DEF_PLE%
 call set "NATIVE=%%FILE%NSEL%%%"
 call set "PLE=%%FILE%PSEL%%%"
 
+rem ---------- pack dir (merged.gguf + pack folder layout) ----------
+set "PACKDIR=%PACK%"
+if exist "%PACK%\pack\native_experts.txt" set "PACKDIR=%PACK%\pack"
+if not "%PACKDIR%"=="%PACK%" echo pack dir: %PACKDIR% (native_experts.txt found)
+
 rem ---------- tokenizer ----------
-set "TOK=%PACK%\tokenizer"
+set "TOK=%PACKDIR%\tokenizer"
 if not exist "%TOK%\vocab.json" (
   echo.
   echo パック内に tokenizer\vocab.json が見つかりません。
@@ -84,7 +89,7 @@ if defined MTPD set "MTPD=%MTPD:"=%"
 
 rem ---------- 設定 JSON を生成 ----------
 set "BKIT_EXE=%ENGINE%"
-set "BKIT_PACK=%PACK%"
+set "BKIT_PACK=%PACKDIR%"
 set "BKIT_NATIVE=%PACK%\%NATIVE%"
 set "BKIT_PLE=%PACK%\%PLE%"
 set "BKIT_TOK=%TOK%"
@@ -98,7 +103,7 @@ if errorlevel 1 (
 echo.
 echo 設定を生成しました: strata-iq3_s-sycl.json
 echo   exe       : %ENGINE%
-echo   pack      : %PACK%
+echo   pack      : %PACKDIR%
 echo   native    : %NATIVE%
 echo   ple-gguf  : %PLE%
 echo   tokenizer : %TOK%
