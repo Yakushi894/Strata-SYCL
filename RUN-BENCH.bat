@@ -92,9 +92,11 @@ set "BKIT_EXE=%ENGINE%"
 set "BKIT_PACK=%PACKDIR%"
 set "BKIT_NATIVE=%PACK%\%NATIVE%"
 set "BKIT_PLE=%PACK%\%PLE%"
+set "BKIT_PROFILE=%~dp0data\expert-profile-sycl.bin"
+if not exist "%BKIT_PROFILE%" echo warning: data\expert-profile-sycl.bin not found (serve verify will refuse)
 set "BKIT_TOK=%TOK%"
 set "BKIT_MTP=%MTPD%"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$a=New-Object System.Collections.ArrayList; [void]$a.AddRange(@('--pack',$env:BKIT_PACK,'--native',$env:BKIT_NATIVE,'--ple-gguf',$env:BKIT_PLE,'--expert-cache','auto','--stream-experts','--prefill','auto','--spec','4','--spec-min-p','0.5','--max-context','16384','--kv','int8','--vram-reserve-mib','1024')); if($env:BKIT_MTP){[void]$a.Add('--mtp');[void]$a.Add($env:BKIT_MTP)}; [void]$a.Add('--serve'); $cfg=[ordered]@{engine='strata';backend='sycl';exe=$env:BKIT_EXE;args=@($a.ToArray());env=[ordered]@{SYCL_CACHE_PERSISTENT='0';STRATA_VERIFY_DEVICE_PLAN='1';STRATA_VERIFY_NO_HOST='1';STRATA_MIRROR_MIB='61440'};cwd='.';tokenizer=$env:BKIT_TOK;model_name='qwen3.8-flash-next-iq3_s';sampling=[ordered]@{temperature=0.6;top_p=0.95;top_k=20;repetition_penalty=1.05};log='strata-iq3_s-sycl.log';host='127.0.0.1';port=8080}; [IO.File]::WriteAllText((Join-Path (Get-Location).Path 'strata-iq3_s-sycl.json'),($cfg|ConvertTo-Json -Depth 5),(New-Object System.Text.UTF8Encoding $false))"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$a=New-Object System.Collections.ArrayList; [void]$a.AddRange(@('--pack',$env:BKIT_PACK,'--native',$env:BKIT_NATIVE,'--ple-gguf',$env:BKIT_PLE,'--expert-profile',$env:BKIT_PROFILE,'--expert-cache','auto','--stream-experts','--prefill','auto','--spec','4','--spec-min-p','0.5','--max-context','16384','--kv','int8','--vram-reserve-mib','1024')); if($env:BKIT_MTP){[void]$a.Add('--mtp');[void]$a.Add($env:BKIT_MTP)}; [void]$a.Add('--serve'); $cfg=[ordered]@{engine='strata';backend='sycl';exe=$env:BKIT_EXE;args=@($a.ToArray());env=[ordered]@{SYCL_CACHE_PERSISTENT='0';STRATA_VERIFY_DEVICE_PLAN='1';STRATA_VERIFY_NO_HOST='1';STRATA_MIRROR_MIB='61440'};cwd='.';tokenizer=$env:BKIT_TOK;model_name='qwen3.8-flash-next-iq3_s';sampling=[ordered]@{temperature=0.6;top_p=0.95;top_k=20;repetition_penalty=1.05};log='strata-iq3_s-sycl.log';host='127.0.0.1';port=8080}; [IO.File]::WriteAllText((Join-Path (Get-Location).Path 'strata-iq3_s-sycl.json'),($cfg|ConvertTo-Json -Depth 5),(New-Object System.Text.UTF8Encoding $false))"
 if errorlevel 1 (
   echo ê›íËÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩÅB
   pause
