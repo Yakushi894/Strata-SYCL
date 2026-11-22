@@ -80,7 +80,7 @@ rem ---------- 環境変数（この3つ＋ミラーが要点） ----------
 set SYCL_CACHE_PERSISTENT=0
 set STRATA_VERIFY_DEVICE_PLAN=1
 set STRATA_VERIFY_NO_HOST=1
-set STRATA_MIRROR_MIB=30720
+set STRATA_MIRROR_MIB=61440
 
 set "ARGS=--pack "%PACK%" --native "%PACK%\%NATIVE%" --ple-gguf "%PACK%\%PLE%" --stream-experts --expert-cache auto --prefill auto --spec 4 --spec-min-p 0.5 --max-context 8192 --tokens 1,2,3 --max-new 128 --greedy --stats %MTPARG%"
 

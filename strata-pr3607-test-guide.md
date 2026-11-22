@@ -64,7 +64,7 @@ set STRATA_VERIFY_NO_HOST=1
 | 症状 | 対処 |
 |---|---|
 | トークンが生成され、`--stats` の段別内訳と ms/token が出る | **成功**。decode の tok/s（＝1000÷ms/token）を控える |
-| `REFUSED: N experts are neither in VRAM nor mirrored` | VRAM キャッシュ＋ピン留め RAM ミラーで全エキスパートを覆えていない。`set STRATA_MIRROR_MIB=32768` を足すか、`--max-context` を下げる（RAM 96GB あるのでミラー拡大が本命） |
+| `REFUSED: N experts are neither in VRAM nor mirrored` | VRAM キャッシュ＋ピン留め RAM ミラーで全エキスパートを覆えていない。`set STRATA_MIRROR_MIB=61440` を足すか、`--max-context` を下げる（RAM 96GB あるのでミラー拡大が本命） |
 | 起動直後に落ちる／デバイスが無い系のエラー | ログ全文を回収。UR アダプタ（同梱済み）と B60 ドライバの Level Zero が噛んでいない可能性を切り分ける |
 | 数トークンで NaN／文字化け状の崩壊 | `STRATA_VERIFY_NO_HOST=1` が効いているか再確認 |
 | **マシンごと固まる** | **要注意**： xe ドライバは VRAM を超える確保を失敗にせずホスト RAM へ退避するため、過大な要求はライブロック→ウォッチドッグでリセットされ得る。`--max-context` と KV を盛らない。VRAM は **1.5GB 以上**空けるのが作者の目安 |
