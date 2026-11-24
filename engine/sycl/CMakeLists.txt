@@ -338,6 +338,9 @@ if(STRATA_MKL_EXPLICIT)
     message(FATAL_ERROR "STRATA_MKL_EXPLICIT: set MKLROOT to the oneMKL tree")
   endif()
   target_include_directories(strata_prefill PUBLIC "$ENV{MKLROOT}/include")
+  # the umbrella mkl_sycl_dll.lib names the domain libraries (lapack, sparse, dft, vm, rng,
+  # stats, data_fitting) as dependent libraries: their folder must be a search path too
+  target_link_options(strata_prefill PUBLIC "-L$ENV{MKLROOT}/lib/intel64")
   target_link_libraries(strata_prefill PUBLIC
     "$ENV{MKLROOT}/lib/intel64/mkl_sycl_blas_dll.lib"
     "$ENV{MKLROOT}/lib/intel64/mkl_sycl_dll.lib"
