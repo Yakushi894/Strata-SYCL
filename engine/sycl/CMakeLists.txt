@@ -136,6 +136,12 @@ list(APPEND _sycl_flags -fsycl-device-code-split=per_kernel)
 if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
   set(_sycl_fp /fp:precise)
   set(_sycl_mkl /Qmkl:sequential)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # the open-source intel/llvm clang++ (the Linux cross build) takes neither Intel spelling:
+  # -ffp-model for the fp model, and oneMKL named outright below (STRATA_MKL_EXPLICIT)
+  set(_sycl_fp -ffp-model=precise)
+  set(_sycl_mkl "")
+  set(STRATA_MKL_EXPLICIT ON)
 else()
   set(_sycl_fp -fp-model=precise)
   set(_sycl_mkl -qmkl=sequential)
@@ -326,6 +332,19 @@ add_library(strata_prefill STATIC ${_prefill}
 target_compile_options(strata_prefill PUBLIC ${_sycl_mkl})
 target_link_options(strata_prefill PUBLIC ${_sycl_mkl})
 target_link_libraries(strata_prefill PUBLIC strata_engine)
+if(STRATA_MKL_EXPLICIT)
+  # the -qmkl:sequential set, named outright: MKLROOT is the oneMKL tree (include/ and lib/)
+  if(NOT DEFINED ENV{MKLROOT})
+    message(FATAL_ERROR "STRATA_MKL_EXPLICIT: set MKLROOT to the oneMKL tree")
+  endif()
+  target_include_directories(strata_prefill PUBLIC "$ENV{MKLROOT}/include")
+  target_link_libraries(strata_prefill PUBLIC
+    "$ENV{MKLROOT}/lib/intel64/mkl_sycl_blas_dll.lib"
+    "$ENV{MKLROOT}/lib/intel64/mkl_sycl_dll.lib"
+    "$ENV{MKLROOT}/lib/intel64/mkl_intel_lp64_dll.lib"
+    "$ENV{MKLROOT}/lib/intel64/mkl_sequential_dll.lib"
+    "$ENV{MKLROOT}/lib/intel64/mkl_core_dll.lib")
+endif()
 
 # Optional TLA data movement for exact FP32 sparse prompt attention on B70.
 # A caller-provided header checkout avoids adding a download to default builds.
